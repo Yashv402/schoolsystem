@@ -4,7 +4,8 @@ import TableSearch from "@/components/TableSearch";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { announcementsData, role} from "@/lib/data";
+import { announcementsData, role } from "@/lib/data";
+import FormModal from "@/components/FormModal";
 
 type Announcement = {
   id: number;
@@ -37,32 +38,21 @@ const columns = [
 
 const AnnouncementsListPage = () => {
   const renderRow = (item: Announcement) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 md:text-sm text-xs hover:bg-lamaPurpleLight h-[60px]">
-        <td className="md:table-cell">{item.title}</td>
-        <td className="md:table-cell">{item.class}</td>
-        <td className="hidden md:table-cell">{item.date}</td>
-        <td>
-            <div className="flex items-center gap-2">
-            <Link href={`/list/teachers/${item.id}`}>
-                <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
-                <Image
-                    src="/edit.png"
-                    width={16}
-                    height={16}
-                    alt="Edit Teacher" />
-                </button>
-            </Link>
-            {role === "admin" && (
-                <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-                <Image
-                src="/delete.png"
-                width={16}
-                height={16}
-                alt="Edit Teacher" />
-            </button>
-            )}
-            </div>
-        </td>
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-50 md:text-sm text-xs hover:bg-lamaPurpleLight h-[60px]"
+    >
+      <td className="md:table-cell">{item.title}</td>
+      <td className="md:table-cell">{item.class}</td>
+      <td className="hidden md:table-cell">{item.date}</td>
+      <td>
+        {role === "admin" && (
+          <div className="flex items-center gap-2">
+            <FormModal table="announcement" type="update" data={item} />
+            <FormModal table="announcement" type="delete" id={item.id} />
+          </div>
+        )}
+      </td>
     </tr>
   );
 
@@ -85,15 +75,17 @@ const AnnouncementsListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/sort.png" width={20} height={20} alt="Add Teacher" />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/plus.png" width={20} height={20} alt="Add Teacher" />
-            </button>
+            <FormModal table="event" type="create" />
           </div>
         </div>
       </div>
       {/* LIST */}
       <div className="">
-        <Table columns={columns}  renderRow={renderRow} data={announcementsData}/>
+        <Table
+          columns={columns}
+          renderRow={renderRow}
+          data={announcementsData}
+        />
       </div>
       {/* PAGINATION */}
       <div className="">

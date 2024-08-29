@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { parentsData, role, studentsData} from "@/lib/data";
+import FormModal from "@/components/FormModal";
 
 type Parent = {
   id: number;
@@ -49,26 +50,12 @@ const ParentListPage = () => {
       <td className="hidden md:table-cell">{item.phone}</td>
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
-        <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
-              <Image
-                src="/edit.png"
-                width={16}
-                height={16}
-                alt="Edit Teacher" />
-            </button>
-          </Link>
-          {role === "admin" && (
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-            <Image
-              src="/delete.png"
-              width={16}
-              height={16}
-              alt="Edit Teacher" />
-          </button>
-          )}
-        </div>
+        {role === "admin" && (
+          <div className="flex items-center gap-2">
+            <FormModal table="parent" type="update" data={item} />
+            <FormModal table="parent" type="delete" id={item.id} />
+          </div>
+        )}
       </td>
     </tr>
   );
@@ -93,7 +80,7 @@ const ParentListPage = () => {
               <Image src="/sort.png" width={20} height={20} alt="Add Teacher" />
             </button>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/plus.png" width={20} height={20} alt="Add Teacher" />
+            <FormModal table="parent" type="create" />
             </button>
           </div>
         </div>

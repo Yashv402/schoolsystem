@@ -6,6 +6,7 @@ import Link from "next/link";
 import React from "react";
 import { role } from "@/lib/data";
 import {teachersData} from "@/lib/data";
+import FormModal from "@/components/FormModal";
 
 type Teacher = {
   id: number;
@@ -88,13 +89,14 @@ const TeacherListPage = () => {
             </button>
           </Link>
           {role === "admin" && (
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-            <Image
-              src="/delete.png"
-              width={16}
-              height={16}
-              alt="Edit Teacher" />
-          </button>
+          //   <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
+          //   <Image
+          //     src="/delete.png"
+          //     width={16}
+          //     height={16}
+          //     alt="Edit Teacher" />
+          // </button>
+          <FormModal table="teacher" type="delete" id={item.id}/>
           )}
         </div>
       </td>
@@ -120,9 +122,10 @@ const TeacherListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/sort.png" width={20} height={20} alt="Add Teacher" />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            {/* <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/plus.png" width={20} height={20} alt="Add Teacher" />
-            </button>
+            </button> */}
+            <FormModal table="teacher" type="create"/>
           </div>
         </div>
       </div>

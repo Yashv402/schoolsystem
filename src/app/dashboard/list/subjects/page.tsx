@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { role, subjectsData} from "@/lib/data";
+import FormModal from "@/components/FormModal";
 
 type Subject = {
   id: number;
@@ -35,26 +36,12 @@ const SubjectListPage = () => {
       <td className="flex items-center gap-4 p-4">{item.name}</td>
       <td className="hidden md:table-cell">{item.teachers.join(", ")}</td>
       <td>
-        <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
-              <Image
-                src="/edit.png"
-                width={16}
-                height={16}
-                alt="Edit Teacher" />
-            </button>
-          </Link>
-          {role === "admin" && (
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-            <Image
-              src="/delete.png"
-              width={16}
-              height={16}
-              alt="Edit Teacher" />
-          </button>
-          )}
-        </div>
+        {role === "admin" && (
+          <div className="flex items-center gap-2">
+            <FormModal table="subject" type="update" data={item} />
+            <FormModal table="subject" type="delete" id={item.id} />
+          </div>
+        )}
       </td>
     </tr>
   );
@@ -78,9 +65,7 @@ const SubjectListPage = () => {
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
               <Image src="/sort.png" width={20} height={20} alt="Add Teacher" />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/plus.png" width={20} height={20} alt="Add Teacher" />
-            </button>
+            <FormModal table="subject" type="create" />
           </div>
         </div>
       </div>
