@@ -1,9 +1,17 @@
-'use client';
+"use client";
 import Image from "next/image";
 import React from "react";
 import { useState } from "react";
-import Announcements from '@/components/Announcements';
+import Announcements from "@/components/Announcements";
+import TeacherForm from "./forms/TeacherForm";
+import StudentForm from "./forms/StudentForm";
 
+const forms: {
+  [key: string]: (type: "create" | "update", date?: any) => JSX.Element;
+} = {
+  teacher: (type, data) => <TeacherForm type={type} data={data} />,
+  student: (type, data) => <StudentForm type={type} data={data} />,
+};
 const FormModal = ({
   table,
   type,
@@ -37,14 +45,24 @@ const FormModal = ({
 
   const [open, setOpen] = useState(false);
   const Form = () => {
-    return type === "delete" && id? (
-      <form action="" className="p-4 flex flex-col gap-4 justify-center items-center">
-        <span className="text-center font-medium">All data will be lost , Are you sure you want to delete this item {table}?</span>
-        <button className="bg-red-500 text-white py-2 px-4 rounded-md border-none w-[70%]">Delete</button>
+    return type === "delete" && id ? (
+      <form
+        action=""
+        className="p-4 flex flex-col gap-4 justify-center items-center"
+      >
+        <span className="text-center font-medium">
+          All data will be lost , Are you sure you want to delete this item{" "}
+          {table}?
+        </span>
+        <button className="bg-red-500 text-white py-2 px-4 rounded-md border-none w-[70%]">
+          Delete
+        </button>
       </form>
-    ):(
-      "create or update from"
-    )
+    ) : type === "create" || type === "update" ? (
+      forms[table](type, data)
+    ) : (
+      "Form not found!"
+    );
   };
 
   return (
@@ -61,7 +79,13 @@ const FormModal = ({
           <div className="bg-white  p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] lx:w-[50%] 2xl:w-[40%]">
             <Form />
             <div className="absolute top-4 right-4 cursor-pointer">
-              <Image  onClick={()=>setOpen(false)} src="/close.png" width={16} height={16} alt="Close" />
+              <Image
+                onClick={() => setOpen(false)}
+                src="/close.png"
+                width={16}
+                height={16}
+                alt="Close"
+              />
             </div>
           </div>
         </div>
