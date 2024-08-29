@@ -14,7 +14,7 @@ type Student = {
   phone?: string;
   photo: string;
   grade: string;
-  class: string;
+  class: string; 
   address: string;
 };
 
@@ -47,7 +47,7 @@ const columns = [
 
 const StudentListPage = () => {
   const renderRow = (item: Student) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 md:text-sm text-xs hover:bg-lamaPurpleLight">
       <td>
         <Image
           src={item.photo}
