@@ -4,6 +4,7 @@ import BigCalender from "@/components/BigCalender";
 import Announcements from "@/components/Announcements";
 import Link from "next/link";
 import FormModal from "@/components/FormModal";
+
 const SingleTeacherPage = () => {
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row">
@@ -141,7 +142,6 @@ const SingleTeacherPage = () => {
             </Link>
           </div>
         </div>
-        {/* <Performance /> */}
         <Announcements />
       </div>
     </div>

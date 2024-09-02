@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "../InputField";
 import Image from "next/image";
+import { teachersData } from "@/lib/data";
 
+
+// Object Schema
 const schema = z.object({
+  teacherId: z.string().min(10, {message: "Max length should be 10"}),
   username: z
     .string()
     .min(3, { message: "Username must be at least 3 characters long!" })
@@ -16,16 +20,36 @@ const schema = z.object({
     .min(8, { message: "Password must be at least 8 characters long!" }),
   firstName: z.string().min(1, { message: "First name is required!" }),
   lastName: z.string().min(1, { message: "Last name is required!" }),
-  phone: z.string().min(1, { message: "Phone number is required!" }),
+  phone: z.string().min(8, { message: "Phone number is required!" }),
   bloodType: z.string().min(1, { message: "Blood type is required!" }),
   address: z.string().min(1, { message: "Address is required!" }),
-  birthday: z.date({ message: "Birthday is required!" }),
+  birthday: z.string().refine((value) => {
+    const parsedDate = new Date(value);
+    return !isNaN(parsedDate.getTime());
+  }, { message: "Invalid date!" }),
+  
   sex: z.enum(["male", "female"], { message: "Sex is required!" }),
-  img: z.instanceof(File, { message: "Image is required!" }),
+  photo: z.instanceof(File, { message: "Image is required!" }),
 });
 
+//     id: 1,
+//     teacherId: "1234567890",
+//     name: "John Doe",
+//     email: "john@doe.com",
+//     photo:
+//       "https://images.pexels.com/photos/2888150/pexels-photo-2888150.jpeg?auto=compress&cs=tinysrgb&w=1200",
+//     phone: "1234567890",
+//     subjects: ["Math", "Geometry"],
+//     classes: ["1B", "2A", "3C"],
+//     address: "123 Main St, Anytown, USA",
+
+
+// declair the input type for the schema 
 type Inputs = z.infer<typeof schema>;
 
+
+
+// MAIN COMPONENT
 const TeacherForm = ({
   type,
   data,
@@ -33,17 +57,58 @@ const TeacherForm = ({
   type: "create" | "update";
   data?: any;
 }) => {
+
+
+  // FOR SHOWING THE IMAGE ON UPLOADING
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  // FOR UPLOADING THE PHOTO OUT WITHOUT THE ZOD 
+  const [photo, setPhoto] = useState<File | null>(null); // State to store the image file
+  // 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
+
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = handleSubmit((data) => {
+
+  // UPDATE THE DATA AND SHOW THE IMAGE ON CHANGING
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file); // Convert the file to a base64 string
+    }
+  };
+
+
+  // HANDLE WHAT WILL HAPPEN ON SUBMIT
+  const onSubmit = (data: any) => {
+    data.preventDefault();
     console.log(data);
-  });
+    data = getValues();
+    console.log(data);
+    if (!photo) {
+      alert("Please upload an image!");
+      return;
+    }
+
+    console.log({ ...data, photo:imageUrl });
+    const n = teachersData.length;
+    console.log(n);
+    console.log(teachersData);
+    teachersData.push({ ...data, photo:imageUrl, id:n }); // Uncomment to add to teachersData
+    
+
+
+  };
 
   return (
     <form className="flex flex-col gap-4" onSubmit={onSubmit}>
@@ -53,7 +118,7 @@ const TeacherForm = ({
         Authentication Information
       </span>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-between">
         <InputField
           label="Username"
           name="username"
@@ -83,10 +148,10 @@ const TeacherForm = ({
         Personal Information
       </span>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-between">
         <InputField
           label="First Name"
-          name="firstname"
+          name="firstName"
           defaultValue={data?.firstName}
           register={register}
           error={errors.firstName}
@@ -94,7 +159,7 @@ const TeacherForm = ({
 
         <InputField
           label="Last Name"
-          name="Lastname"
+          name="lastName"
           defaultValue={data?.lastname}
           register={register}
           error={errors.lastName}
@@ -109,7 +174,7 @@ const TeacherForm = ({
         />
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-between">
         <InputField
           label="Address"
           name="address"
@@ -120,7 +185,7 @@ const TeacherForm = ({
 
         <InputField
           label="Blood Type"
-          name="bloodtype"
+          name="bloodType"
           defaultValue={data?.bloodtype}
           register={register}
           error={errors.bloodType}
@@ -136,6 +201,7 @@ const TeacherForm = ({
         />
       </div>
 
+{/* INPUT FOR SEX */}
       <div className="flex justify-between">
         <div className="flex flex-col gap-2 w-[30%]">
           <label className="text-xs text-gray-400">Sex</label>
@@ -154,6 +220,8 @@ const TeacherForm = ({
           )}
         </div>
 
+
+{/* INPUT FOR IMAGE */}
         <div className="flex flex-col gap-2 w-[30%] justify-center">
           <label
             className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
@@ -166,21 +234,32 @@ const TeacherForm = ({
             id="img"
             className="hidden"
             type="file"
-            {...register("img")}
-            name=""
+            name="photo"
+            onChange={handleImageChange}
           />
-          {errors.img?.message && (
-            <p className="text-xs text-red-400">
-              {errors.img.message.toString()}
-            </p>
+          {!photo && (
+            <p className="text-xs text-red-400">Image is required!</p>
           )}
         </div>
       </div>
 
-      <button className="bg-blue-300 rounded-md p-2">
+{/* TO SHOW THE IMAGES UPLOADED */}
+      {imageUrl && (
+        <div className="flex justify-center mt-4">
+          <Image
+            src={imageUrl}
+            alt="Image Preview"
+            width={100}
+            height={100}
+            className="object-cover rounded-md"
+          />
+        </div>
+      )}
+
+{/* SUBMIT BUTTON */}
+      <button type="submit" className="bg-blue-300 rounded-md p-2">
         {type === "create" ? "Create" : "Update"}
       </button>
-
     </form>
   );
 };
