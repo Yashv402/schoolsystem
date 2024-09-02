@@ -2,6 +2,37 @@
 
 export let role = "admin";
 
+export const usersData = [
+  {
+    id: 1,
+    username: "YashviSingh",
+    email: "john@doe.com",
+    password: "Yashvi@1234",
+    post: "admin",
+  },
+  {
+    id: 1,
+    username: "AnushkaToppo",
+    email: "john@doe.com",
+    password: "Anushka@234",
+    post: "teacher",
+  },
+  {
+    id: 1,
+    username: "MehakTanwar",
+    email: "john@doe.com",
+    password: "Mehak@1234",
+    post: "student",
+  },
+  {
+    id: 1,
+    username: "KeshavMadhav",
+    email: "john@doe.com",
+    password: "Keshav@1234",
+    post: "student",
+  },
+];
+
 export const teachersData = [
   {
     id: 1,
