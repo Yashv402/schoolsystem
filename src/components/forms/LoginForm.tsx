@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "../InputField";
 import { usersData } from "@/lib/data";
 import { useRouter } from "next/navigation"; // Correct import for Next.js 13+
+import { useRoleStore } from "@/utils/store/role";
 
 // Object Schema
 const schema = z.object({
@@ -32,6 +33,8 @@ const TeacherForm = () => {
     resolver: zodResolver(schema),
   });
 
+
+  const {role, setRole} = useRoleStore();
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter(); // Initialize the router for navigation
 
@@ -48,8 +51,9 @@ const TeacherForm = () => {
     if (foundTeacher) {
       console.log("User found! :)")
       console.log(foundTeacher)
+      setRole(foundTeacher.post);
       // If credentials match, redirect to the dashboard
-      router.push('/dashboard/'+foundTeacher.post);
+      router.push('/'+foundTeacher.post+'/'+foundTeacher.id+'/dashboard');
       // role = foundTeacher.post;
 
     } else {
