@@ -1,3 +1,4 @@
+'use client'
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -6,6 +7,7 @@ import Link from "next/link";
 import React from "react";
 import { role, studentsData} from "@/lib/data";
 import FormModal from "@/components/FormModal";
+import { usePathname } from "next/navigation";
 type Student = {
   id: number;
   studnetId: string;
@@ -46,6 +48,9 @@ const columns = [
 ];
 
 const StudentListPage = () => {
+
+  const pathname = usePathname();
+  const role = pathname.split("/")[1];
   const renderRow = (item: Student) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 md:text-sm text-xs hover:bg-lamaPurpleLight">
       <td>
@@ -67,7 +72,7 @@ const StudentListPage = () => {
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
-          <Link href={`/dashboard/list/students/${item.id}`}>
+          <Link href={`/${role}/list/students/${item.id}`}>
             <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
               <Image
                 src="/view.png"
